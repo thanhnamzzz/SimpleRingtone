@@ -53,6 +53,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Path;
 
 @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
 public class MainActivity extends AppCompatActivity {
@@ -109,9 +110,8 @@ public class MainActivity extends AppCompatActivity {
 //            } catch (IOException e) {
 //                e.printStackTrace();
 //            }
-
-            Uri uri = Uri.parse("android.resource://" + getPackageName() + "/raw/funny_animal_9");
-            File fileinApp = new File("android.resource://" + getPackageName() + "/raw/funny_animal_9.mp3");
+            String path = "android.resource://" + getPackageName() + "/"+R.raw.funny_animal_9;
+            Uri uri = Uri.parse(path);
 //            Uri uri = Uri.parse(Environment.getExternalStorageDirectory() + "/Ringtones/funny_animal_8");
 
             ContentResolver contentResolver = getContentResolver();
@@ -143,7 +143,7 @@ public class MainActivity extends AppCompatActivity {
             values.put(MediaStore.MediaColumns.TITLE, "Ringtone Animal: Funny Animal " + edt.getText());
             values.put(MediaStore.MediaColumns.ARTIST, "Ringtone Animal: Funny Animal " + edt.getText());
             values.put(MediaStore.MediaColumns.SIZE, newFile.length());
-            values.put(MediaStore.MediaColumns.MIME_TYPE, "audio/mp3");
+            values.put(MediaStore.MediaColumns.MIME_TYPE, "audio/mpeg");
 //            values.put(MediaStore.Audio.Media.RELATIVE_PATH, storagePath);
             values.put(MediaStore.Audio.Media.IS_RINGTONE, true);
 
