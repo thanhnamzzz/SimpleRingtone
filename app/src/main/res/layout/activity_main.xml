@@ -23,11 +23,4 @@
         android:text="Set!"
         android:textSize="30sp" />
 
-    <Button
-        android:id="@+id/btn_setup2"
-        android:layout_width="150dp"
-        android:layout_height="70dp"
-        android:text="Set2!"
-        android:textSize="30sp" />
-
 </LinearLayout>
