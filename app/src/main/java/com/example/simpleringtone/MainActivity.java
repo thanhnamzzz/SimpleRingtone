@@ -171,7 +171,7 @@ public class MainActivity extends AppCompatActivity {
             //cache
             File file = new File(getExternalCacheDir() + "/" + fileName);
             FileOutputStream out = null;
-
+            Log.e("aaa0", file.getPath());
             out = new FileOutputStream(file.getPath());
 
             byte[] buff = new byte[1024];
@@ -190,16 +190,21 @@ public class MainActivity extends AppCompatActivity {
             ContentResolver mCr = this.getContentResolver();
             ContentValues values = new ContentValues();
             values.put(MediaStore.MediaColumns.DATA, file.getAbsolutePath());
+//            values.put(MediaStore.MediaColumns.TITLE, "Ringtone Animal");
             values.put(MediaStore.MediaColumns.TITLE, file.getName());
+//            values.put(MediaStore.MediaColumns.DISPLAY_NAME,"Ringtone Animal");
             values.put(MediaStore.MediaColumns.MIME_TYPE, "audio/mpeg");
             values.put(MediaStore.MediaColumns.SIZE, file.length());
             values.put(MediaStore.Audio.Media.ARTIST, R.string.app_name);
             values.put(MediaStore.Audio.Media.IS_RINGTONE, true);
             values.put(MediaStore.Audio.Media.IS_NOTIFICATION, true);
             values.put(MediaStore.Audio.Media.IS_ALARM, true);
-            values.put(MediaStore.Audio.Media.IS_MUSIC, true);
+            values.put(MediaStore.Audio.Media.IS_MUSIC, false);
 
-            Uri uri = MediaStore.Audio.Media.getContentUriForPath(file.getAbsolutePath());
+//            Uri uri = MediaStore.Audio.Media.getContentUriForPath(file.getAbsolutePath());
+            Uri uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
+            uri = Uri.parse(Environment.getExternalStorageDirectory() + "/Music/nc/" + file.getName());
+            Log.e("aaa9", uri.getPath());
             Uri newUri = mCr.insert(uri, values);
             OutputStream out2 = mCr.openOutputStream(newUri);
             byte[] buff2 = new byte[1024];
@@ -213,11 +218,11 @@ public class MainActivity extends AppCompatActivity {
                 in.close();
                 out.close();
             }
+            Log.e("aaa1", newUri.toString());
+            Log.e("aaa2", newUri.getPath());
 //luu vao danh sach nhac chuong va chon lam nhac chuong
-            RingtoneManager.setActualDefaultRingtoneUri(MainActivity.this,
-                    RingtoneManager.TYPE_RINGTONE, newUri);
-            Settings.System.putString(mCr, Settings.System.RINGTONE,
-                    newUri.toString());
+            RingtoneManager.setActualDefaultRingtoneUri(MainActivity.this, RingtoneManager.TYPE_RINGTONE, newUri);
+//            Settings.System.putString(mCr, Settings.System.RINGTONE, newUri.toString());
             return newUri;
         } catch (Exception e) {
             e.printStackTrace();
@@ -302,81 +307,81 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private Uri createFile(File file, ContentResolver mCr, int resourceId) {
-        String newName = "" + file.getName();
-        ContentValues values = new ContentValues();
-        values.put(MediaStore.MediaColumns.DISPLAY_NAME, newName);
-        values.put(MediaStore.MediaColumns.MIME_TYPE, "audio/mpeg");
-        values.put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_MUSIC);
-        values.put(MediaStore.Audio.Media.IS_RINGTONE, true);
-        values.put(MediaStore.Audio.Media.IS_NOTIFICATION, true);
-        values.put(MediaStore.Audio.Media.IS_ALARM, true);
-        values.put(MediaStore.Audio.Media.IS_MUSIC, true);
-        Log.e("aaa", MediaStore.Audio.Media.EXTERNAL_CONTENT_URI.getPath());
-        Uri newUri = mCr.insert(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, values);
-
-
-
-        try {
-            OutputStream out = mCr.openOutputStream(newUri);
-            byte[] buff = new byte[1024];
-            int read = 0;
-            InputStream in = getResources().openRawResource(resourceId);
-            try {
-                while ((read = in.read(buff)) > 0) {
-                    out.write(buff, 0, read);
-                }
-            } finally {
-                out.flush();
-                in.close();
-                out.close();
-            }
-            return Uri.parse(Environment.getExternalStorageDirectory().getPath() + "/Music/" +  newName);
-
-//            return newUri;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
-
-    }
-
-    private Uri addToRingtone(File file,ContentResolver mCr, int resourceId){
-        ContentValues values = new ContentValues();
-        values.put(MediaStore.MediaColumns.DATA, file.getAbsolutePath());
-        values.put(MediaStore.MediaColumns.TITLE, file.getName());
-        values.put(MediaStore.MediaColumns.MIME_TYPE, "audio/mpeg");
-
-        values.put(MediaStore.MediaColumns.SIZE, file.length());
-        values.put(MediaStore.Audio.Media.ARTIST, R.string.app_name);
-        values.put(MediaStore.Audio.Media.IS_RINGTONE, true);
-        values.put(MediaStore.Audio.Media.IS_NOTIFICATION, true);
-        values.put(MediaStore.Audio.Media.IS_ALARM, true);
-        values.put(MediaStore.Audio.Media.IS_MUSIC, true);
-
-        Uri uri = MediaStore.Audio.Media.getContentUriForPath(file.getAbsolutePath());
-        return mCr.insert(uri, values);
-    }
-    private void requestPermission() {
-        if (SDK_INT >= Build.VERSION_CODES.R) {
-            if (Environment.isExternalStorageManager()) {
-                return;
-            }
-            try {
-                Intent intent = new Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
-                intent.addCategory("android.intent.category.DEFAULT");
-                intent.setData(Uri.parse(String.format("package:%s",getApplicationContext().getPackageName())));
-                startActivityForResult(intent, 2296);
-            } catch (Exception e) {
-                Intent intent = new Intent();
-                intent.setAction(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION);
-                startActivityForResult(intent, 2296);
-            }
-        } else {
-            //below android 11
-            ActivityCompat.requestPermissions(this, new String[]{WRITE_EXTERNAL_STORAGE}, 0);
-        }
-    }
+//    private Uri createFile(File file, ContentResolver mCr, int resourceId) {
+//        String newName = "" + file.getName();
+//        ContentValues values = new ContentValues();
+//        values.put(MediaStore.MediaColumns.DISPLAY_NAME, newName);
+//        values.put(MediaStore.MediaColumns.MIME_TYPE, "audio/mpeg");
+//        values.put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_MUSIC);
+//        values.put(MediaStore.Audio.Media.IS_RINGTONE, true);
+//        values.put(MediaStore.Audio.Media.IS_NOTIFICATION, true);
+//        values.put(MediaStore.Audio.Media.IS_ALARM, true);
+//        values.put(MediaStore.Audio.Media.IS_MUSIC, true);
+//        Log.e("aaa", MediaStore.Audio.Media.EXTERNAL_CONTENT_URI.getPath());
+//        Uri newUri = mCr.insert(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, values);
+//
+//
+//
+//        try {
+//            OutputStream out = mCr.openOutputStream(newUri);
+//            byte[] buff = new byte[1024];
+//            int read = 0;
+//            InputStream in = getResources().openRawResource(resourceId);
+//            try {
+//                while ((read = in.read(buff)) > 0) {
+//                    out.write(buff, 0, read);
+//                }
+//            } finally {
+//                out.flush();
+//                in.close();
+//                out.close();
+//            }
+//            return Uri.parse(Environment.getExternalStorageDirectory().getPath() + "/Music/" +  newName);
+//
+////            return newUri;
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//        return null;
+//
+//    }
+//
+//    private Uri addToRingtone(File file,ContentResolver mCr, int resourceId){
+//        ContentValues values = new ContentValues();
+//        values.put(MediaStore.MediaColumns.DATA, file.getAbsolutePath());
+//        values.put(MediaStore.MediaColumns.TITLE, file.getName());
+//        values.put(MediaStore.MediaColumns.MIME_TYPE, "audio/mpeg");
+//
+//        values.put(MediaStore.MediaColumns.SIZE, file.length());
+//        values.put(MediaStore.Audio.Media.ARTIST, R.string.app_name);
+//        values.put(MediaStore.Audio.Media.IS_RINGTONE, true);
+//        values.put(MediaStore.Audio.Media.IS_NOTIFICATION, true);
+//        values.put(MediaStore.Audio.Media.IS_ALARM, true);
+//        values.put(MediaStore.Audio.Media.IS_MUSIC, true);
+//
+//        Uri uri = MediaStore.Audio.Media.getContentUriForPath(file.getAbsolutePath());
+//        return mCr.insert(uri, values);
+//    }
+//    private void requestPermission() {
+//        if (SDK_INT >= Build.VERSION_CODES.R) {
+//            if (Environment.isExternalStorageManager()) {
+//                return;
+//            }
+//            try {
+//                Intent intent = new Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
+//                intent.addCategory("android.intent.category.DEFAULT");
+//                intent.setData(Uri.parse(String.format("package:%s",getApplicationContext().getPackageName())));
+//                startActivityForResult(intent, 2296);
+//            } catch (Exception e) {
+//                Intent intent = new Intent();
+//                intent.setAction(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION);
+//                startActivityForResult(intent, 2296);
+//            }
+//        } else {
+//            //below android 11
+//            ActivityCompat.requestPermissions(this, new String[]{WRITE_EXTERNAL_STORAGE}, 0);
+//        }
+//    }
 
 
 
